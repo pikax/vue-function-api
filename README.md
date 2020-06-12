@@ -336,3 +336,94 @@ export default {
   },
 };
 ```
+
+
+## Library/Utils Authors
+
+Composable functions can be provided through an external library.
+
+
+### `[vue-composition-api] must call Vue.use(plugin) before using any function.`
+
+Please see [Usage](#usage)
+
+### Have `Vue.use(vueCompositionApi)` but still throwing error:
+
+This is caused by having multiple `composition-api` instances.
+
+
+
+#### Different versions:
+
+When your library and the project depend on different versions of the `composition-api`, the bundler will have both instances, eg:
+
+```json
+// my-library/package.js
+"dependencies": {
+  "@vue/composition-api": "0.5.0"
+}
+```
+```json
+//  user/package.js
+"dependencies":{
+  "@vue/composition-api": "0.6.2"
+}
+```
+
+Your library will have a dependency on `0.5.0` but the user has dependency on `0.6.2`, the bundler will need to import both.
+
+#### Solution 
+
+Keep your dependencies up-to-date and allow the a range of versions:
+
+```json
+// my-library/package.js
+"dependencies": {
+  "@vue/composition-api": "^0.6.0"
+}
+```
+```json
+//  user/package.js
+"dependencies":{
+  "@vue/composition-api": "^0.6.2"
+}
+```
+
+We recommend to set `@vue/composition-api` as a [peerDependency](https://classic.yarnpkg.com/en/docs/dependency-types/#toc-peerdependencies), to prevent bundling multiple instances of the plugin.
+
+```json
+// my-library/package.js
+"peerDependencies": {
+  "@vue/composition-api": "^0.6.0"
+}
+```
+
+
+#### Local package or `yarn link`
+
+When using a local package (`"myLibrary": "file:../../myLibrary"`) or `yarn link`, the `node_modules` folder relative to your local/linked library will have more priority, if `@vue/composition-api` is installed there it will import it, making your bundler importing two different instances.
+
+
+
+### FAQ
+
+> #### Should I `Vue.use(vueCompositionApi)` on my library?
+
+We recommend this to be done on the user side.
+
+> #### How do I use `@vue/composition-api` in my package?
+
+Your plugin 
+
+> #### 
+
+> #### 
+
+
+
+
+
+
+### Common errors
+
+#### 
