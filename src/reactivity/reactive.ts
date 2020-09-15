@@ -4,7 +4,12 @@ import { isPlainObject, def, warn } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
-import { rawSet, readonlySet, reactiveSet } from '../utils/sets'
+import {
+  rawSet,
+  readonlySet,
+  reactiveSet,
+  accessControlSet,
+} from '../utils/sets'
 
 export function isRaw(obj: any): boolean {
   return rawSet.has(obj)
@@ -28,9 +33,12 @@ function setupAccessControl(target: AnyObject): void {
     isRaw(target) ||
     Array.isArray(target) ||
     isRef(target) ||
-    isComponentInstance(target)
+    isComponentInstance(target) ||
+    accessControlSet.has(target)
   )
     return
+
+  accessControlSet.add(target)
 
   const keys = Object.keys(target)
   for (let i = 0; i < keys.length; i++) {
